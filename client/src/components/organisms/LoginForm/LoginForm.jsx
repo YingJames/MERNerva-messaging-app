@@ -97,7 +97,7 @@ const LoginForm = () => {
                 </div>
                 <div className="form--signup-container">
                     <p className="form--signup__label">Don't have an account?</p>
-                    <Button as={Link} to={'/sign-up'}
+                    <Button as={Link} to={'/signup'}
                             className='form--submit'
                             kind="tertiary"
                             tabIndex={0}

@@ -52,8 +52,8 @@ function App() {
                     </ProtectedRoute>
                 } />
 
-                <Route path={'/log-in'} element={<LoginPage />} />
-                <Route path={'/sign-up'} element={<SignupPage />} />
+                <Route path={'/login'} element={<LoginPage />} />
+                <Route path={'/signup'} element={<SignupPage />} />
             </Routes>
         </CurrentUserContext.Provider>
     );

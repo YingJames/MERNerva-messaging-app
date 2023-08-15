@@ -7,7 +7,7 @@ import {
     NotificationActionButton
 } from '@carbon/react';
 import { ArrowRight, Login } from '@carbon/icons-react';
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { loginWithGoogle, signupWithEmailPassword } from "../../../auth";
 import { handleSignUpError } from "../../../auth/auth-error-handling";
@@ -15,7 +15,6 @@ import './_signup-form.scss';
 
 
 const SignUpForm = () => {
-    const navigate = useNavigate();
     const [showSuccessNotif, setShowSuccessNotif] = useState(false);
     const [formData, setFormData] = useState({
         email: '', password: '', displayName: '',
@@ -24,8 +23,8 @@ const SignUpForm = () => {
         displayName: false, email: false, password: false,
     });
     const [invalidMessage, setInvalidMessage] = useState({
-        displayName: '', 
-        email: 'Invalid e-mail address. Please try again.', 
+        displayName: '',
+        email: 'Invalid e-mail address. Please try again.',
         password: 'Password must be at least 6 characters long. Please try again.',
     });
 
@@ -48,13 +47,14 @@ const SignUpForm = () => {
                     iconDescription="describes the close button"
                     subtitle={`Redirecting you to the dashboard in ${timeLeft} seconds`}
                     title="Signed up successfully!"
+
                 />
             </div>
         )
     }
 
     function handleInputChange(e) {
-        const {name, value} = e.target;
+        const { name, value } = e.target;
         setFormData((prevData) => ({
             ...prevData, [name]: value,
         }));
@@ -79,7 +79,7 @@ const SignUpForm = () => {
         <Form className="form" onSubmit={handleFormSubmit}>
             <Stack gap={4} className="signup-form--title-container">
                 <p className="form__label">Already have an account?&nbsp;
-                    <Link to={'/log-in'}>Log in</Link>
+                    <Link to={'/login'}>Log in</Link>
                 </p>
                 {showSuccessNotif && (
                     <SuccessNotification />
