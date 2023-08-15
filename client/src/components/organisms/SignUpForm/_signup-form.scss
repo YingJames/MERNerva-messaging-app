@@ -1,0 +1,21 @@
+@use '@carbon/type';
+@use '@carbon/layout';
+@use '@carbon/colors';
+@use '@carbon/themes';
+
+.signup-form--title-container {
+  padding-bottom: layout.$spacing-05;
+  margin-bottom: layout.$spacing-07;
+  border-bottom: 3px solid themes.$focus;
+}
+
+.form--signup-container {
+  padding: layout.$spacing-06 0;
+  border-top: 1px solid themes.$border-subtle-00;
+  border-bottom: 1px solid themes.$border-subtle-00;
+}
+
+.form--signup__label  {
+  @include type.type-style('body-compact-01');
+  color: themes.$text-secondary;
+}

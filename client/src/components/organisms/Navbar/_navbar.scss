@@ -1,0 +1,17 @@
+@use "@carbon/colors";
+@use "@carbon/layout";
+
+.navbar {
+  background: #282c34;
+  color: red;
+}
+
+// override header tooltip
+.cds--header__global .cds--popover-content {
+  background-color: colors.$gray-80;
+  color: white;
+}
+
+.popover-content {
+  padding: layout.$spacing-06 layout.$spacing-08;
+}

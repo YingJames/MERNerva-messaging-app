@@ -1,0 +1,15 @@
+@use '@carbon/react';
+@use '@carbon/type';
+@use './components/styles/form';
+//@use './components/organisms/LoadingScreen/loading-screen';
+//@use './components/organisms/LoginForm/login-form';
+//@use './components/organisms/SignUpForm/signup-form';
+
+// Include type reset
+@include type.reset();
+
+// Include default type styles, targets h1, h2, h3, etc
+@include type.default-type();
+
+// Include utility classes for type-related properties
+@include type.type-classes();
