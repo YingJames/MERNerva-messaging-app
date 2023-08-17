@@ -19,7 +19,7 @@ function App() {
         const unsubscribe = onAuthStateChanged(auth, user => {
             setUser(user);
             setLoading(false);
-            if (user && !loading && window.location.pathname === '/log-in') {
+            if (user && !loading && window.location.pathname === '/login') {
                 window.location.pathname = '/dashboard';
             }
         });
@@ -35,7 +35,7 @@ function App() {
             )
         } else if (!user && !loading) {
             console.log(`redirecting to login`)
-            return <Navigate to={'/log-in'} replace />;
+            return <Navigate to={'/login'} replace />;
         } else {
             return children;
         }
@@ -44,7 +44,7 @@ function App() {
     return (
         <CurrentUserContext.Provider value={{user, setUser}}>
             <Routes>
-                <Route path={'/'} element={<Navigate to={'log-in'} />} />
+                <Route path={'/'} element={<Navigate to={'login'} />} />
 
                 <Route path={'/dashboard'} element={
                     <ProtectedRoute>
