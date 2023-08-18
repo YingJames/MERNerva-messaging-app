@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { loginWithGoogle, signupWithEmailPassword } from "../../../auth";
 import { handleSignUpError } from "../../../auth/auth-error-handling";
+import got from 'got';
 import './_signup-form.scss';
 
 
@@ -63,7 +64,16 @@ const SignUpForm = () => {
     async function handleFormSubmit(e) {
         e.preventDefault();
         try {
-            await signupWithEmailPassword(formData)
+            const userCredentials = await signupWithEmailPassword(formData)
+            const uuid = await userCredentials.user.uid;
+            const {data} = await got.post(`${process.env.ROOT_URL}api/database/users/createUser`, {
+                json: {
+                    email: formData.email,
+                    displayName: formData.displayName,
+                    uuid: uuid,
+                },
+            }).json();
+
             setShowSuccessNotif(true);
             setInputInvalidState(false);
             setTimeout(() => {

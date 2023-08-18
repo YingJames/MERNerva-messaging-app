@@ -1,18 +1,19 @@
 import { Router } from "express";
 import User from "../models/user.mjs";
-import database from "../config/database.mjs";
+import { connection } from "../config/mongoClient.mjs"
 
 const userRoutes = Router();
 
-userRoutes.post('/register', async (request, response) => {
+userRoutes.post('/createUser', async (request, response) => {
     try {
-        const { email, displayName, uuid } = request.body;
+        const { email, displayName, uuid } = await request.body;
         const newUser = new User({
             email,
             displayName,
             uuid,
         });
-        let userBase = await database.collection("users");
+        const userDb = await connection.useDb("messageDB");
+        const userBase = await userDb.collection("users");
         let result = await userBase.insertOne(newUser);
         response.status(201).json({ message: "User registered successfully", newUser });
     } catch (error) {
