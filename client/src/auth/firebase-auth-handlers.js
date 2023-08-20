@@ -30,7 +30,20 @@ export const signupWithEmailPassword = async (formData) => {
     const user = userCredential.user;
     updateProfile(user, {
         displayName: formData.displayName
-    })
+    });
+
+    const response = await fetch("http://localhost:5050/api/database/users/createUser", {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            "email": formData.email,
+            "displayName": formData.displayName,
+            "uid": user.uid
+        }),
+    });
 }
 
 export const loginWithGoogle = async () => {
