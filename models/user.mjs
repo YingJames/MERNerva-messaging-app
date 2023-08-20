@@ -1,8 +1,8 @@
 import { Schema, model } from "mongoose";
 
 const userSchema = new Schema({
-    uuid: { type: String, required: true, unique: true },
-    username: { type: String, required: true },
+    uid: { type: String, required: true, unique: true },
+    displayName: { type: String, required: true },
     email: { type: String, required: true },
     // Additional user properties can be added here
 });

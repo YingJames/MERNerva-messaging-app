@@ -6,11 +6,12 @@ const userRoutes = Router();
 
 userRoutes.post('/createUser', async (request, response) => {
     try {
-        const { email, displayName, uuid } = await request.body;
+        const { email, displayName, uid } = await request.body;
+        console.log(`email: ${email}, displayName: ${displayName}, uid: ${uid}`)
         const newUser = new User({
             email,
             displayName,
-            uuid,
+            uid,
         });
         const userDb = await connection.useDb("messageDB");
         const userBase = await userDb.collection("users");
