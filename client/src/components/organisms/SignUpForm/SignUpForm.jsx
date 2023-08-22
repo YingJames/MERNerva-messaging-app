@@ -64,9 +64,6 @@ const SignUpForm = () => {
         e.preventDefault();
         try {
             const userCredentials = await signupWithEmailPassword(formData)
-            const uuid = await userCredentials.user.uid;
-            console.log(`uuid before fetch request: ${uuid}`)
-
 
             setShowSuccessNotif(true);
             setInputInvalidState(false);
