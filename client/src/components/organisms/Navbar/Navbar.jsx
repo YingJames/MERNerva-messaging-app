@@ -11,9 +11,11 @@ import {
     SideNav,
     SideNavItems,
     HeaderSideNavItems,
-    PopoverContent, Button, Stack
+    PopoverContent, 
+    Button, 
+    Stack, 
 } from '@carbon/react';
-import { Notification, UserAvatar } from '@carbon/react/icons';
+import { UserAvatar } from '@carbon/react/icons';
 import { Link } from 'react-router-dom';
 import CustomPopover from "../../molecules/CustomPopover/";
 import { logout } from "../../../auth";
@@ -52,9 +54,7 @@ const Navbar = () => {
                         </SideNavItems>
                     </SideNav>
                     <HeaderGlobalBar>
-                        <HeaderGlobalAction aria-label="Notifications" tooltipAlignment="center">
-                            <Notification size={20} />
-                        </HeaderGlobalAction>
+
 
                         <CustomPopover align={'bottom-right'}>
                             <HeaderGlobalAction aria-label="Account" tooltipAlignment="end">
