@@ -21,12 +21,35 @@ userRoutes.post('/createUser', async (request, response) => {
         // Push the new user into the "users" array in the document
         await userBase.updateOne(
             { _id: parentId },
-            { $push: { users: newUser } }
+            { $push: { Users: newUser } }
         );
 
         response.status(201).json({ message: "User registered successfully", newUser });
     } catch (error) {
         response.status(500).json({ error: "User registration failed", details: error.message });
+    }
+});
+
+userRoutes.post('/findUser', async (request, response) => {
+    try {
+        const { email } = await request.body;
+
+        const user = await User.find(
+            { "Users.email": email },
+            { "Users.$": 1 }
+        );
+
+        if (user && (user.length > 0)) {
+            response.status(200).json({ 
+                message: "User found successfully",
+                details: user
+            });
+        } else {
+            response.status(404).json({ error: "User not found" });
+        } 
+    }
+     catch (error) {
+        response.status(500).json({ error: "User search failed", details: error.message });
     }
 });
 

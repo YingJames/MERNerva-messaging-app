@@ -8,6 +8,7 @@ export const connectToMongoClient = async () => {
         const conn = await mongoose.connect(connectionString, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
+            dbName: "messageDB",
         });
         console.log(colors.cyan.underline(`MongoDB Connected: ${conn.connection.host}`));
 
