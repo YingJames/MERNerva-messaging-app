@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { CurrentUserContext } from "../../App";
-import { Content, Theme} from "@carbon/react";
+import { Content, Theme } from "@carbon/react";
+import SearchUsers from "../organisms/SearchUsers";
 import Navbar from "../organisms/Navbar";
 import './_dashboard.scss'
 
@@ -17,6 +18,7 @@ const Dashboard = () => {
 
             <Content className=".cds--content">
                 <h1>Dashboard, Hi {user.displayName}!</h1>
+                <SearchUsers />
             </Content>
 
         </>
