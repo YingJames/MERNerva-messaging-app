@@ -15,7 +15,7 @@ import {
     Button, 
     Stack, 
 } from '@carbon/react';
-import { UserAvatar } from '@carbon/react/icons';
+import Avvvatars from 'avvvatars-react';
 import { Link } from 'react-router-dom';
 import CustomPopover from "../../molecules/CustomPopover/";
 import { logout } from "../../../auth";
@@ -58,7 +58,7 @@ const Navbar = () => {
 
                         <CustomPopover align={'bottom-right'}>
                             <HeaderGlobalAction aria-label="Account" tooltipAlignment="end">
-                                <UserAvatar size={20} />
+                                <Avvvatars value={user.email} size="30" />
                             </HeaderGlobalAction>
                             <PopoverContent>
                                 <Stack gap={6} className="popover-content">
