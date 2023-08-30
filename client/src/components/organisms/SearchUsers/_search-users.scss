@@ -1,0 +1,23 @@
+@use '@carbon/colors';
+
+.sidebar {
+    max-width: 45%;
+    height: 100%;
+    border-right: 1px solid colors.$gray-40;
+    background-color: white;
+}
+
+.user-search--profile {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    // background-color: colors.$gray-10;
+    border-bottom: 1px solid colors.$gray-40;
+}
+
+.user-search--profile__info {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 0.5rem;
+}
