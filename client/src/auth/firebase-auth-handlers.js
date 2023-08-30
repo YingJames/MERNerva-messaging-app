@@ -4,9 +4,11 @@ import {
     GoogleAuthProvider,
     signInWithEmailAndPassword,
     signInWithPopup,
-    signOut
+    signOut,
+    getAdditionalUserInfo
 } from "firebase/auth";
 import FirebaseInit from "./firebase-init";
+import {CreateUser} from "../requests";
 
 export const auth = FirebaseInit();
 export const logout = () => {
@@ -32,43 +34,39 @@ export const signupWithEmailPassword = async (formData) => {
         displayName: formData.displayName
     });
 
-    const response = await fetch("http://localhost:5050/api/database/users/createUser", {
-        method: 'POST',
-        mode: 'cors',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            "email": formData.email,
-            "displayName": formData.displayName,
-            "uid": user.uid
-        }),
-    });
-}
+    const userData = {
+        email: formData.email,
+        displayName: formData.displayName,
+        uid: user.uid
+    }
+    await CreateUser(userData);
+
+};
 
 export const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider)
         .then((result) => {
+            // const credential = GoogleAuthProvider.credentialFromResult(result);
+            const additionalUserInfo = getAdditionalUserInfo(result);
+
+            // add user to mongodb if new
+            if (additionalUserInfo.isNewUser) {
+                const userData = {
+                    email: result.user.email,
+                    displayName: result.user.displayName,
+                    uid: result.user.uid
+                }
+                CreateUser(userData);
+            }
             // This gives you a Google Access Token. You can use it to access the Google API.
-            const credential = GoogleAuthProvider.credentialFromResult(result);
             /*
                         const token = credential.accessToken;
                         // The signed-in user info.
-                        const user = result.user;
                         // IdP data available using getAdditionalUserInfo(result)
                         // ...
             */
         }).catch((error) => {
-        // Handle Errors here.
-        /*
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                // The email of the user's account used.
-                const email = error.customData.email;
-                // The AuthCredential type that was used.
-                const credential = GoogleAuthProvider.credentialFromError(error);
-                // ...
-        */
+            console.log("Firebase Google Auth Error: ", error);
     });
 }
