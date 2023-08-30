@@ -1,10 +1,12 @@
 import { Schema, model } from "mongoose";
 
+const ObjectId = Schema.ObjectId;
+
 export const userSchema = new Schema({
     uid: { type: String, required: true, unique: true },
     displayName: { type: String, required: true },
     email: { type: String, required: true },
-    // Additional user properties can be added here
+    rooms: [{ type: ObjectId, ref: 'Room' }]
 });
 
 export const User = model("User", userSchema);
