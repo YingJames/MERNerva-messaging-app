@@ -10,5 +10,5 @@ const roomSchema = new Schema({
     // Additional chat properties can be added here
 });
 
-const Room = model('Room', chatSchema);
-export default Room;
+const Room = model('Room', roomSchema);
+export { Room };
