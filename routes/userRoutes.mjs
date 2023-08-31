@@ -14,12 +14,12 @@ userRoutes.post('/createUser', async (request, response) => {
             displayName,
             uid,
         });
-        const userDb = await connection.useDb("messageDB");
-        const userBase = await userDb.collection("users");
+        const messageDB = await connection.useDb("messageDB");
+        const userCollection = await messageDB.collection("users");
         const parentId = new Types.ObjectId("64e41f03d2d11c76a94bdbbb");
 
         // Push the new user into the "users" array in the document
-        await userBase.updateOne(
+        await userCollection.updateOne(
             { _id: parentId },
             { $push: { Users: newUser } }
         );
