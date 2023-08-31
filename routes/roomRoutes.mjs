@@ -34,22 +34,6 @@ roomRoutes.post('/createRoom', async (request, response) => {
                 } 
             }
         );
-        // console.log(user);
-        // update user's chatrooms
-        // await userCollection.updateMany({ 
-        //     Users: { 
-        //         _id: { 
-        //             $in: participants 
-        //         }
-        //     }
-        // },
-        // { 
-        //     $push: { 
-        //         "Users.$": {
-        //             rooms: newRoom
-        //         } 
-        //     } 
-        // });
 
         response.status(200).json({ message: "ChatRoom created successfully" });
     } catch (error) {
