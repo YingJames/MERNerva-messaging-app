@@ -16,13 +16,19 @@ userRoutes.post('/createUser', async (request, response) => {
         });
         const messageDB = await connection.useDb("messageDB");
         const userCollection = await messageDB.collection("users");
-        const parentId = new Types.ObjectId("64e41f03d2d11c76a94bdbbb");
 
         // Push the new user into the "users" array in the document
-        await userCollection.updateOne(
-            { _id: parentId },
-            { $push: { Users: newUser } }
-        );
+        const existingUserDocu = await userCollection.findOne();
+        if (existingUserDocu) {
+            await userCollection.updateOne(
+                { _id: existingUserDocu._id },
+                { $push: { Users: newUser } }
+            );
+        } else {
+            await userCollection.insertOne({
+                Users: [newUser]
+            });
+        }
 
         response.status(201).json({ message: "User registered successfully", newUser });
     } catch (error) {
@@ -40,15 +46,15 @@ userRoutes.post('/findUser', async (request, response) => {
         );
 
         if (user && (user.length > 0)) {
-            response.status(200).json({ 
+            response.status(200).json({
                 message: "User found successfully",
                 details: user
             });
         } else {
             response.status(404).json({ error: "User not found" });
-        } 
+        }
     }
-     catch (error) {
+    catch (error) {
         response.status(500).json({ error: "User search failed", details: error.message });
     }
 });
