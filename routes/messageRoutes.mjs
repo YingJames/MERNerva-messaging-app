@@ -1,5 +1,5 @@
-
 import { Router } from "express";
+import { Types } from "mongoose";
 import { Message } from "../models/message.mjs";
 import { connection } from "../config/mongoClient.mjs"
 
@@ -7,8 +7,10 @@ const messageRoutes = Router();
 
 messageRoutes.post('/createMessage', async (request, response) => {
     try {
-        const { messageThreadId, senderId, content  } = await request.body;
-
+        let { messageThreadId, senderId, content  } = await request.body;
+        if (typeof messageThreadId == "string") {
+            messageThreadId = new Types.ObjectId(messageThreadId);
+        }
         const newMessage = new Message({
             senderId,
             content,
@@ -16,16 +18,15 @@ messageRoutes.post('/createMessage', async (request, response) => {
 
         const messageDB = connection.useDb("messageDB");
         const messageThreadCollection = messageDB.collection("messagethreads");
-        // const messageThreadsParentId = new Types.ObjectId("64f09c327e063247895687b0");
 
         await messageThreadCollection.updateOne(
-            { _id: messageThreadId },
-            { $push: { "MessageThreads.$": newMessage } }
+            { "MessageThreads._id": messageThreadId },
+            { $push: { "MessageThreads.$.messages": newMessage } }
         );
-        
 
+        response.status(201).json({ message: "Message created successfully", newMessage });
     } catch(error) {
-
+        response.status(500).json({ error: "Message creation failed", details: error.message });
     }
 });
 
