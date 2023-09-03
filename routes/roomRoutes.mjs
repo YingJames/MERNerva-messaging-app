@@ -7,9 +7,14 @@ const roomRoutes = Router();
 
 roomRoutes.post('/createRoom', async (request, response) => {
     try {
-        const { name } = await request.body;
-        const participants = [new Types.ObjectId("64e8bd022013af15c06aa387"),
-                              new Types.ObjectId("64e8bce42013af15c06aa385")]
+        const { name, participants } = await request.body;
+        const isStringsArray = arr => arr.every(i => typeof i === "string");
+        if (isStringsArray(participants)) {
+            participants.forEach((participant, index) => {
+                participants[index] = new Types.ObjectId(participant);
+            });
+        }
+
         console.log(`name: ${name}, participants: ${participants}`);
         const newRoom = new Room({
             name,
