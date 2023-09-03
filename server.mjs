@@ -4,7 +4,7 @@ import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 import { connectToMongoClient } from "./config/mongoClient.mjs";
-import { roomRoutes, userRoutes } from "./routes/index.mjs";
+import { messageRoutes, roomRoutes, userRoutes } from "./routes/index.mjs";
 
 import colors from "colors";
 
@@ -25,6 +25,7 @@ app.get('*', (request, response) => {
 connectToMongoClient();
 app.use("/api/database/users", userRoutes);
 app.use("/api/database/rooms", roomRoutes);
+app.use("/api/database/messages", messageRoutes);
 
 app.listen(PORT, () => {
     console.log(colors.yellow.bold(`Server is running on http://localhost:${PORT}`));

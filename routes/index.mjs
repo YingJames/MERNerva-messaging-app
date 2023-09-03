@@ -1,3 +1,4 @@
+import messageRoutes from "./messageRoutes.mjs";
 import roomRoutes from "./roomRoutes.mjs";
 import userRoutes from "./userRoutes.mjs";
-export { roomRoutes, userRoutes };
+export { messageRoutes, roomRoutes, userRoutes };
