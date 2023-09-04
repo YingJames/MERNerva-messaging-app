@@ -45,28 +45,19 @@ export const signupWithEmailPassword = async (formData) => {
 
 export const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-    signInWithPopup(auth, provider)
-        .then((result) => {
-            // const credential = GoogleAuthProvider.credentialFromResult(result);
-            const additionalUserInfo = getAdditionalUserInfo(result);
+    try {
+        const result = await signInWithPopup(auth, provider);
+        const additionalUserInfo = getAdditionalUserInfo(result);
 
-            // add user to mongodb if new
-            if (additionalUserInfo.isNewUser) {
-                const userData = {
-                    email: result.user.email,
-                    displayName: result.user.displayName,
-                    uid: result.user.uid
-                }
-                CreateUser(userData);
+        if (additionalUserInfo.isNewUser) {
+            const userData = {
+                email: result.user.email,
+                displayName: result.user.displayName,
+                uid: result.user.uid
             }
-            // This gives you a Google Access Token. You can use it to access the Google API.
-            /*
-                        const token = credential.accessToken;
-                        // The signed-in user info.
-                        // IdP data available using getAdditionalUserInfo(result)
-                        // ...
-            */
-        }).catch((error) => {
-            console.log("Firebase Google Auth Error: ", error);
-    });
+            await CreateUser(userData);
+        }
+    } catch (error) {
+        console.log("Firebase Google Auth Error: ", error);
+    }
 }
