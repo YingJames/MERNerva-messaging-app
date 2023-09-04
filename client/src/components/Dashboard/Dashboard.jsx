@@ -4,9 +4,9 @@ import { Content, Theme } from "@carbon/react";
 import SearchUsers from "../organisms/SearchUsers";
 import Navbar from "../organisms/Navbar";
 import './_dashboard.scss'
+import ChatRoom from "../ChatRoom";
 
 const Dashboard = () => {
-    // const { user } = useContext(CurrentUserContext);
 
     return (
         <>
@@ -18,7 +18,7 @@ const Dashboard = () => {
 
             <Content className="cds--content">
                 <SearchUsers />
-                <div></div>
+                <ChatRoom />
                 {/* <h1>Dashboard, Hi {user.displayName}!</h1> */}
             </Content>
 
