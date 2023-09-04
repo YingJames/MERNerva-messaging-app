@@ -60,6 +60,19 @@ const SignUpForm = () => {
         }));
     }
 
+    async function handleGoogleSignUp() {
+        try {
+            await loginWithGoogle();
+            setShowSuccessNotif(true);
+            setInputInvalidState(false);
+            setTimeout(() => {
+                window.location.pathname = '/dashboard';
+            }, 5000)
+        } catch (error) {
+            console.log("Error handling Google Signup:", error);
+        }
+    }
+
     async function handleFormSubmit(e) {
         e.preventDefault();
         try {
@@ -67,9 +80,9 @@ const SignUpForm = () => {
 
             setShowSuccessNotif(true);
             setInputInvalidState(false);
-            // setTimeout(() => {
-            //     window.location.pathname = '/dashboard';
-            // }, 5000)
+            setTimeout(() => {
+                window.location.pathname = '/dashboard';
+            }, 5000)
         } catch (error) {
             handleSignUpError(error, setInputInvalidState, setInvalidMessage);
         }
@@ -130,7 +143,7 @@ const SignUpForm = () => {
                         kind="tertiary"
                         tabIndex={0}
                         renderIcon={Login}
-                        onClick={loginWithGoogle}
+                        onClick={handleGoogleSignUp}
                     >Sign up with Google</Button>
                 </Stack>
             </Stack>
