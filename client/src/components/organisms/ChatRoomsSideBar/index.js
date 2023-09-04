@@ -1,2 +1,2 @@
-import SearchUsers from './SearchUsers';
-export default SearchUsers;
+import ChatRoomsSideBar from './ChatRoomsSidebar';
+export default ChatRoomsSideBar;

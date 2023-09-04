@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { Search, InlineNotification, NotificationActionButton, Button } from "@carbon/react";
 import { UserFollow } from "@carbon/icons-react";
 import Avvvatars from 'avvvatars-react';
-import './_search-users.scss';
+import './_chatrooms-sidebar.scss';
 
-const SearchUsers = () => {
+const ChatRoomsSidebar = () => {
     const [searchValue, setSearchValue] = useState('');
     const [showResults, setShowResults] = useState(false);
     const [displayName, setDisplayName] = useState('');
@@ -95,4 +95,4 @@ const SearchUsers = () => {
     );
 }
 
-export default SearchUsers;
+export default ChatRoomsSidebar;
