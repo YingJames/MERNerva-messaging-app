@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Search, InlineNotification, NotificationActionButton, Button } from "@carbon/react";
 import { UserFollow } from "@carbon/icons-react";
 import Avvvatars from 'avvvatars-react';
+import { FindUser } from '../../../requests/users';
 import './_chatrooms-sidebar.scss';
 
 const ChatRoomsSidebar = () => {
@@ -19,16 +20,7 @@ const ChatRoomsSidebar = () => {
     async function handleUserSearch(e) {
         e.preventDefault();
         try {
-            const request = await fetch("http://localhost:5050/api/database/users/findUser", {
-                method: "POST",
-                cors: "cors",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    "email": searchValue
-                }),
-            });
+            const request = FindUser(searchValue);
             const requestJson = await request.json();
             if (!request.ok) {
                 throw (requestJson.error);
