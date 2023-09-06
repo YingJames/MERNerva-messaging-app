@@ -1,4 +1,4 @@
-export async function FindUser(email) {
+async function FindUser(email) {
     try {
         const request = await fetch("http://localhost:5050/api/database/users/findUser", {
             method: "POST",
@@ -19,7 +19,7 @@ export async function FindUser(email) {
 
 }
 
-export async function CreateUser(userData) {
+async function CreateUser(userData) {
     try {
         const { email, displayName, uid } = userData;
         const response = await fetch("http://localhost:5050/api/database/users/createUser", {
@@ -42,3 +42,4 @@ export async function CreateUser(userData) {
     }
 };
 
+export { FindUser, CreateUser }
