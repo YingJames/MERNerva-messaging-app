@@ -6,6 +6,39 @@ import { connection } from "../config/mongoClient.mjs"
 
 const roomRoutes = Router();
 
+roomRoutes.post('/findRooms', async (request, response) => {
+    try {
+        let { userId } = await request.body;
+        if (typeof userId == "string") {
+            userId = new Types.ObjectId(userId);
+        }
+        console.log(`userId: ${userId}`);
+        const messageDB = connection.useDb("messageDB");
+        const roomCollection = messageDB.collection("rooms");
+        const userCollection = messageDB.collection("users");
+
+        const roomIdsArray = await userCollection.findOne(
+            { "Users._id": userId },
+            {
+                projection: {
+                    "Users.rooms.$": 1
+                }
+            },
+        );
+        const roomIds = roomIdsArray.Users[0].rooms;
+        response.status(200).json({
+            message: "ChatRooms found successfully",
+            roomIds
+        });
+    } catch (error) {
+        console.log(error);
+        response.status(500).json({
+            message: "ChatRooms could not be found",
+            error: error
+        });
+    }
+});
+
 roomRoutes.post('/createRoom', async (request, response) => {
     try {
         const { name, participants } = await request.body;
