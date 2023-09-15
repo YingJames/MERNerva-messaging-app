@@ -7,6 +7,19 @@
     background-color: white;
 }
 
+.sidebar--create-room__wrapper {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    gap: 1rem;
+    border-bottom: 1px solid colors.$gray-40;
+}
+
+.create-room--body {
+    max-width: 85%;
+    padding-left: 0.5rem;
+}
+
 .user-search--profile {
     display: flex;
     gap: 1rem;
