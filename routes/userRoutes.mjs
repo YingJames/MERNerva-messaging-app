@@ -59,4 +59,27 @@ userRoutes.post('/findUser', async (request, response) => {
     }
 });
 
+userRoutes.post('/userExist', async (request, response) => {
+    try {
+        const { email } = await request.body;
+
+        const user = await User.findOne(
+            { "Users.email": email },
+        );
+        if (user) {
+            response.status(200).json({
+                message: "User found successfully",
+                flag: true
+            });
+        } else {
+            response.status(404).json({
+                error: "User not found",
+                flag: false
+            });
+        }
+    } catch (error) {
+        console.log(error);
+    }
+});
+
 export default userRoutes;
