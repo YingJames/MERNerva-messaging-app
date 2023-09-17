@@ -29,14 +29,16 @@ roomRoutes.post('/findRooms', async (request, response) => {
         const roomIds = roomIdsArray.Users[0].rooms;
         console.log(`roomIds: ${roomIds}`)
 
-        // find room objects from the room collection
-        const rooms = await roomCollection.find(
-            { "Rooms._id": { $in: roomIds } },
-        ).toArray();
-        const roomsArray = rooms[0].Rooms;
+        const rooms = await roomCollection.aggregate([
+            { $match: { "Rooms._id": { $in: roomIds } } },
+            { $unwind: "$Rooms" },
+            { $match: { "Rooms._id": { $in: roomIds } } },
+            { $project :{_id: "$Rooms._id", name: "$Rooms.name", participants: "$Rooms.participants" }}
+        ]).toArray();
+        console.log(`rooms: ${rooms}`)
         response.status(200).json({
             message: "ChatRooms found successfully",
-            rooms: roomsArray
+            rooms: rooms
         });
     } catch (error) {
         console.log(error);
