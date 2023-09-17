@@ -1,43 +1,91 @@
-import { useState, useEffect, useRef } from 'react';
-import { Search, InlineNotification, NotificationActionButton, Button, Modal } from "@carbon/react";
+import { useState, useEffect, useRef, useContext } from 'react';
+import {
+    Search,
+    InlineNotification,
+    NotificationActionButton,
+    Button,
+    Modal,
+    TextInput,
+    Stack,
+} from "@carbon/react";
 import { Events } from "@carbon/icons-react";
 import Avvvatars from 'avvvatars-react';
-import { FindUser } from '../../../requests/users';
+import { DoesUserExist, FindUser } from '../../../requests/users';
 import './_chatrooms-sidebar.scss';
+import { CreateRoom, FindRooms } from "../../../requests/rooms";
+import { CurrentUserContext } from "../../../App";
 
 
 //TODO: grab chatroom data for the logged in user and display it in the sidebar
+//TODO: grab the logged in user's id and add it to the room's participants list
+
+//TODO: add the logged in user to the participants list of the room
 const ChatRoomsSidebar = () => {
-    const [searchValue, setSearchValue] = useState('');
-    // const [showResults, setShowResults] = useState(false);
-    // const [displayName, setDisplayName] = useState('');
-    // const [invalidSearch, setInvalidSearch] = useState(false);
-    // const [email, setEmail] = useState('');
+    const createRoomRef = useRef();
+    const { user } = useContext(CurrentUserContext);
+
+    const [currentUserId, setCurrentUserId] = useState(null);
     const [rooms, setRooms] = useState([]);
+    const [roomName, setRoomName] = useState('');
+    const [userEmails, setUserEmails] = useState('');
     const [showCreateRoomModal, setShowCreateRoomModal] = useState(false);
 
     useEffect(() => {
         //TODO: request needs a body with the user's id
         //TODO: must create a room for the user if they don't have one dumbdumb
-        async function getRooms() {
-            const request = await fetch('http://localhost:5000/api/database/findRooms');
-            const requestJson = await request.json();
-            if (!request.ok) {
-                throw (requestJson.error);
-            }
-            const { roomIds } = requestJson;
-            setRooms(roomIds);
-        }
-    }, []);
 
-    function handleInputChange(e) {
+        // when a new user signs up on google, they are added to mongodb, but there is latency
+        // check if user exists in mongodb yet
+            const fetchRooms = async () => {
+                // grab the current user mongodb _id
+                const userExists = await DoesUserExist(user.email);
+                console.log(userExists);
+                if (userExists.flag) {
+                    const { _id } = await FindUser(user.email);
+                    console.log(`currentUser _id: ${_id}`)
+                    setCurrentUserId(_id);
+
+                    const rooms = await FindRooms(_id);
+                    setRooms(rooms);
+                    console.log(rooms)
+                }
+            }
+            fetchRooms();
+    }, [rooms]);
+
+    function handleCreateRoomNameChange(e) {
         const { value } = e.target;
-        setSearchValue(value);
+        setRoomName(value)
     }
 
-    function handleCreateRoomOnClick() {
-        setShowCreateRoomModal(true);
-        console.log('clicked')
+    function handleChangeUserEmailsChange(e) {
+        const { value } = e.target;
+        setUserEmails(value);
+    }
+
+    async function handleCreateRoomOnSubmit() {
+        setShowCreateRoomModal(false);
+        const userEmailsArray = userEmails
+            .replace(" ", "")
+            .split(',');
+        userEmailsArray.push(user.email);
+
+        // TODO: send the request to create a room
+        // finds _id of each participant using their email
+        const participants = await Promise.all(userEmailsArray.map(async (email) => {
+            const { _id } = await FindUser(email);
+            return _id;
+        }));
+
+        const roomData = {
+            name: roomName,
+            participants: participants
+        }
+        const response = await CreateRoom(roomData);
+        // reset the values for the next Modal
+        setRoomName('');
+        setUserEmails('');
+        createRoomRef.current.reset();
     }
 
     /*
@@ -65,17 +113,46 @@ const ChatRoomsSidebar = () => {
         }
     */
 
+
     return (
         <aside className="sidebar">
             <Modal
                 open={showCreateRoomModal}
                 onRequestClose={() => setShowCreateRoomModal(false)}
+                onRequestSubmit={handleCreateRoomOnSubmit}
+                modalHeading="Create a room"
                 primaryButtonText="Create your room"
                 secondaryButtonText="Cancel Process"
+                primaryButtonDisabled={roomName === '' || userEmails === ''}
             >
                 <div className="create-room--body">
-                    <h2>Create Room</h2>
-                    Only users that have an account can be invited to a room. If you would like to invite a user that does not have an account, please ask them to create one.
+
+                    Only users that have an account can be invited to a room. If you would like to invite a user that
+                    does not have an account, please ask them to create an account first.
+
+                    <form
+                        className="create-room--form"
+                        ref={createRoomRef}
+                    >
+                        <Stack gap={7}>
+
+                            <TextInput id="create-room--text-input__room-name"
+                                       labelText="Room Name"
+                                       placeholder="your room name"
+                                       onChange={handleCreateRoomNameChange}
+                                       required
+
+                            />
+
+                            <TextInput id="create-room--text-input__add-participant"
+                                       labelText="Add people to your room by their e-mail address. Separate multiple e-mails with a comma."
+                                       placeholder="john@email.com, bob@email.com"
+                                       onChange={handleChangeUserEmailsChange}
+                                       required
+                            />
+
+                        </Stack>
+                    </form>
                 </div>
             </Modal>
 
@@ -83,9 +160,21 @@ const ChatRoomsSidebar = () => {
                 <Button className="sidebar--create-room__button"
                         renderIcon={Events}
                         iconDescription="Invite User"
-                        onClick={() => handleCreateRoomOnClick()}
+                        onClick={() =>
+                            setShowCreateRoomModal(true)
+                        }
                 >Create a room
                 </Button>
+            </div>
+            <div>
+                <h3>Rooms</h3>
+                <ul>
+                    {/*{rooms.map((room) => {*/}
+                    {/*    return <li key={room._id}>{room.name}</li>*/}
+                    {/*}*/}
+                    {/*)}*/}
+                </ul>
+
             </div>
             {/*    <form
                 className="user-search-form"

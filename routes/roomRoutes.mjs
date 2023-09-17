@@ -17,6 +17,7 @@ roomRoutes.post('/findRooms', async (request, response) => {
         const roomCollection = messageDB.collection("rooms");
         const userCollection = messageDB.collection("users");
 
+        // find room ids from the user collection
         const roomIdsArray = await userCollection.findOne(
             { "Users._id": userId },
             {
@@ -26,9 +27,16 @@ roomRoutes.post('/findRooms', async (request, response) => {
             },
         );
         const roomIds = roomIdsArray.Users[0].rooms;
+        console.log(`roomIds: ${roomIds}`)
+
+        // find room objects from the room collection
+        const rooms = await roomCollection.find(
+            { "Rooms._id": { $in: roomIds } },
+        ).toArray();
+        const roomsArray = rooms[0].Rooms;
         response.status(200).json({
             message: "ChatRooms found successfully",
-            roomIds
+            rooms: roomsArray
         });
     } catch (error) {
         console.log(error);

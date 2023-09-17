@@ -12,8 +12,8 @@ async function FindRooms(userId) {
             })
         });
 
-        const roomIds = await request.json();
-        return roomIds;
+        const data = await response.json();
+        return data.rooms;
     } catch (error) {
         console.log("Error finding rooms:", error);
         throw error;
@@ -35,11 +35,11 @@ async function CreateRoom(roomData) {
 
         });
 
-        console.log(response);
+        return await response.json();
     } catch (error) {
         console.log("Error creating room:", error);
         throw error;
     }
 }
 
-export { CreateRoom };
+export { CreateRoom, FindRooms };

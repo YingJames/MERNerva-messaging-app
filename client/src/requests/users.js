@@ -1,6 +1,6 @@
 async function FindUser(email) {
     try {
-        const request = await fetch("http://localhost:5050/api/database/users/findUser", {
+        const response = await fetch("http://localhost:5050/api/database/users/findUser", {
             method: "POST",
             cors: "cors",
             headers: {
@@ -10,13 +10,11 @@ async function FindUser(email) {
                 "email": email
             }),
         });
-
-        return request;
+        const data = await response.json();
+        return data.details[0].Users[0];
     } catch (error) {
         console.log("Error finding user:", error);
-        throw error;
      }
-
 }
 
 async function CreateUser(userData) {
@@ -42,4 +40,23 @@ async function CreateUser(userData) {
     }
 };
 
-export { FindUser, CreateUser }
+async function DoesUserExist(email) {
+    try {
+        const response = await fetch("http://localhost:5050/api/database/users/userExist", {
+            method: "POST",
+            cors: "cors",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                "email": email
+            }),
+        });
+        const data = await response.json();
+        return data.flag;
+    } catch (error) {
+        console.log("Error finding user:", error);
+     }
+}
+
+export { FindUser, CreateUser, DoesUserExist }
