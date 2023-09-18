@@ -36,22 +36,23 @@ const ChatRoomsSidebar = () => {
 
         // when a new user signs up on google, they are added to mongodb, but there is latency
         // check if user exists in mongodb yet
-            const fetchRooms = async () => {
-                // grab the current user mongodb _id
-                const userExists = await DoesUserExist(user.email);
-                console.log(userExists);
-                if (userExists) {
-                    const { _id } = await FindUser(user.email);
-                    console.log(`currentUser _id: ${_id}`)
-                    setCurrentUserId(_id);
-
-                    const rooms = await FindRooms(_id);
-                    setRooms(rooms);
-                    console.log(rooms)
-                }
-            }
             fetchRooms();
     }, []);
+
+    const fetchRooms = async () => {
+        // grab the current user mongodb _id
+        const userExists = await DoesUserExist(user.email);
+        console.log(userExists);
+        if (userExists) {
+            const { _id } = await FindUser(user.email);
+            console.log(`currentUser _id: ${_id}`)
+            setCurrentUserId(_id);
+
+            const rooms = await FindRooms(_id);
+            setRooms(rooms);
+            console.log(`fetchRooms: ${JSON.stringify(rooms)}`);
+        }
+    }
 
     function handleCreateRoomNameChange(e) {
         const { value } = e.target;
@@ -82,6 +83,7 @@ const ChatRoomsSidebar = () => {
             participants: participants
         }
         const response = await CreateRoom(roomData);
+        await fetchRooms();
         // reset the values for the next Modal
         setRoomName('');
         setUserEmails('');
@@ -169,10 +171,10 @@ const ChatRoomsSidebar = () => {
             <div>
                 <h3>Rooms</h3>
                 <ul>
-                    {/*{rooms.map((room) => {*/}
-                    {/*    return <li key={room._id}>{room.name}</li>*/}
-                    {/*}*/}
-                    {/*)}*/}
+                    {rooms.map((room) => {
+                        return <li key={room._id}>{room.name}</li>
+                    }
+                    )}
                 </ul>
 
             </div>
