@@ -40,7 +40,7 @@ const ChatRoomsSidebar = () => {
                 // grab the current user mongodb _id
                 const userExists = await DoesUserExist(user.email);
                 console.log(userExists);
-                if (userExists.flag) {
+                if (userExists) {
                     const { _id } = await FindUser(user.email);
                     console.log(`currentUser _id: ${_id}`)
                     setCurrentUserId(_id);
@@ -51,7 +51,7 @@ const ChatRoomsSidebar = () => {
                 }
             }
             fetchRooms();
-    }, [rooms]);
+    }, []);
 
     function handleCreateRoomNameChange(e) {
         const { value } = e.target;
