@@ -12,9 +12,10 @@ const ChatRoom = () => {
 
     useEffect(() => {
         getMessages();
-        console.log(`getMessages: ${JSON.stringify(messages)}`);
     }, [currentRoom]);
-
+    // TODO: messages do not refresh if clicking same room because useEffect does not run
+    // TODO: render the message on the screen
+    // TODO how to update the message thread when a new message is sent
     async function getMessages() {
         if (currentRoom) {
             const messages = await FindMessages(currentRoom.messageThread);
