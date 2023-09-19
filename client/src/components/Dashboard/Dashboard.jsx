@@ -5,8 +5,11 @@ import Navbar from "../organisms/Navbar";
 import './_dashboard.scss'
 import ChatRoom from "../ChatRoom";
 import ChatRoomsSideBar from "../organisms/ChatRoomsSideBar";
+import { createContext, useState } from "react";
 
+export const CurrentRoomContext = createContext(null);
 const Dashboard = () => {
+    const [currentRoom, setCurrentRoom] = useState(null);
 
     return (
         <>
@@ -16,11 +19,13 @@ const Dashboard = () => {
             </Theme>
 
 
-            <Content className="cds--content">
-                <ChatRoomsSideBar />
-                <ChatRoom />
-                {/* <h1>Dashboard, Hi {user.displayName}!</h1> */}
-            </Content>
+            <CurrentRoomContext.Provider value={{ currentRoom, setCurrentRoom }}>
+                <Content className="cds--content">
+                    <ChatRoomsSideBar />
+                    <ChatRoom />
+                    {/* <h1>Dashboard, Hi {user.displayName}!</h1> */}
+                </Content>
+            </CurrentRoomContext.Provider>
 
         </>
     );

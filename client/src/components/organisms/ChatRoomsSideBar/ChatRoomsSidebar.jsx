@@ -8,12 +8,13 @@ import {
     TextInput,
     Stack,
 } from "@carbon/react";
-import { Events } from "@carbon/icons-react";
+import { Events, Group } from "@carbon/icons-react";
 import Avvvatars from 'avvvatars-react';
 import { DoesUserExist, FindUser } from '../../../requests/users';
 import './_chatrooms-sidebar.scss';
 import { CreateRoom, FindRooms } from "../../../requests/rooms";
 import { CurrentUserContext } from "../../../App";
+import { CurrentRoomContext } from "../../Dashboard/Dashboard";
 
 
 //TODO: grab chatroom data for the logged in user and display it in the sidebar
@@ -23,9 +24,13 @@ import { CurrentUserContext } from "../../../App";
 const ChatRoomsSidebar = () => {
     const createRoomRef = useRef();
     const { user } = useContext(CurrentUserContext);
+    const { currentRoom, setCurrentRoom } = useContext(CurrentRoomContext);
 
-    const [currentUserId, setCurrentUserId] = useState(null);
+    const [mongoUser, setMongoUser] = useState(null);
+    // lists all the rooms the user is a part of
     const [rooms, setRooms] = useState([]);
+
+    // for the create room modal
     const [roomName, setRoomName] = useState('');
     const [userEmails, setUserEmails] = useState('');
     const [showCreateRoomModal, setShowCreateRoomModal] = useState(false);
@@ -44,10 +49,10 @@ const ChatRoomsSidebar = () => {
         const userExists = await DoesUserExist(user.email);
         console.log(userExists);
         if (userExists) {
-            const { _id } = await FindUser(user.email);
-            console.log(`currentUser _id: ${_id}`)
-            setCurrentUserId(_id);
+            const mongoUser = await FindUser(user.email);
+            setMongoUser(mongoUser);
 
+            const { _id } = mongoUser;
             const rooms = await FindRooms(_id);
             setRooms(rooms);
             console.log(`fetchRooms: ${JSON.stringify(rooms)}`);
@@ -88,6 +93,11 @@ const ChatRoomsSidebar = () => {
         setRoomName('');
         setUserEmails('');
         createRoomRef.current.reset();
+    }
+
+    function handleSeeRoomOnClick(index) {
+        //TODO: set the current room to the room at the index
+        setCurrentRoom(rooms[index]);
     }
 
     /*
@@ -171,8 +181,16 @@ const ChatRoomsSidebar = () => {
             <div>
                 <h3>Rooms</h3>
                 <ul>
-                    {rooms.map((room) => {
-                        return <li key={room._id}>{room.name}</li>
+                    {rooms.map((room, index) => {
+                        return <li key={room._id} index={index}>
+                            <Button className={"sidebar--chat-room__button"}
+                                    kind={"secondary"}
+                                    renderIcon={Group}
+                                    onClick={() => handleSeeRoomOnClick(index)}
+                            >
+                                {room.name}
+                            </Button>
+                            </li>
                     }
                     )}
                 </ul>
