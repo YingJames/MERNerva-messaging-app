@@ -7,12 +7,12 @@ async function FindMessages(messageThreadId) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                "messageThread": messageThreadId
+                "messageThreadId": messageThreadId
             })
         });
 
         const data = await response.json();
-        return data.messages;
+        return data.messageThread[0].messages;
     } catch (error) {
         console.log("Error finding messages:", error);
     }
