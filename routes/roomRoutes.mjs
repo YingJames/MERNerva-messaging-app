@@ -33,7 +33,11 @@ roomRoutes.post('/findRooms', async (request, response) => {
             { $match: { "Rooms._id": { $in: roomIds } } },
             { $unwind: "$Rooms" },
             { $match: { "Rooms._id": { $in: roomIds } } },
-            { $project :{_id: "$Rooms._id", name: "$Rooms.name", participants: "$Rooms.participants" }}
+            { $project :{_id: "$Rooms._id",
+                    name: "$Rooms.name",
+                    participants: "$Rooms.participants",
+                    messageThread: "$Rooms.messageThread"
+            }}
         ]).toArray();
         console.log(`rooms: ${rooms}`)
         response.status(200).json({
