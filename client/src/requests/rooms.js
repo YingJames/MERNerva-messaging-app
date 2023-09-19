@@ -1,5 +1,4 @@
 async function FindRooms(userId) {
-    // TODO: make find user function in users.js
     try {
         const response = await fetch("http://localhost:5050/api/database/rooms/findRooms", {
             method: 'POST',

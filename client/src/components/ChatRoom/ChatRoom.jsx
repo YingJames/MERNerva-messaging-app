@@ -1,18 +1,30 @@
 import './_chat-room.scss';
 import { CurrentUserContext } from "../../App";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { CurrentRoomContext } from "../Dashboard/Dashboard";
+import { FindMessages } from "../../requests/messages";
 
 const ChatRoom = () => {
     // user variable from firebase
     const { user } = useContext(CurrentUserContext);
     const { currentRoom, setCurrentRoom } = useContext(CurrentRoomContext);
-    /* TODO: grab user data from mongodb using firebase user variable
-    *   create a request to create a chat room */
+    const [messages, setMessages] = useState([]);
+
+    useEffect(() => {
+        getMessages();
+        console.log(`getMessages: ${JSON.stringify(messages)}`);
+    }, [currentRoom]);
+
+    async function getMessages() {
+        if (currentRoom) {
+            const messages = await FindMessages(currentRoom.messageThread);
+            setMessages(messages || []);
+        }
+    }
+
     return (
         <div className="chat-room">
-            <h1>{currentRoom.name}</h1>
-
+            {currentRoom ? <h1>{currentRoom.name}</h1> : <h1>Choose a chat room to start messaging</h1>}
         </div>
     )
 };

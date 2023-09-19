@@ -17,10 +17,6 @@ import { CurrentUserContext } from "../../../App";
 import { CurrentRoomContext } from "../../Dashboard/Dashboard";
 
 
-//TODO: grab chatroom data for the logged in user and display it in the sidebar
-//TODO: grab the logged in user's id and add it to the room's participants list
-
-//TODO: add the logged in user to the participants list of the room
 const ChatRoomsSidebar = () => {
     const createRoomRef = useRef();
     const { user } = useContext(CurrentUserContext);
@@ -36,8 +32,6 @@ const ChatRoomsSidebar = () => {
     const [showCreateRoomModal, setShowCreateRoomModal] = useState(false);
 
     useEffect(() => {
-        //TODO: request needs a body with the user's id
-        //TODO: must create a room for the user if they don't have one dumbdumb
 
         // when a new user signs up on google, they are added to mongodb, but there is latency
         // check if user exists in mongodb yet
@@ -76,7 +70,6 @@ const ChatRoomsSidebar = () => {
             .split(',');
         userEmailsArray.push(user.email);
 
-        // TODO: send the request to create a room
         // finds _id of each participant using their email
         const participants = await Promise.all(userEmailsArray.map(async (email) => {
             const { _id } = await FindUser(email);
@@ -96,7 +89,7 @@ const ChatRoomsSidebar = () => {
     }
 
     function handleSeeRoomOnClick(index) {
-        //TODO: set the current room to the room at the index
+        console.log(rooms[index])
         setCurrentRoom(rooms[index]);
     }
 
