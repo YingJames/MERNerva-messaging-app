@@ -36,12 +36,12 @@ messageRoutes.post('/findMessageThread', async (request, response) => {
 
 messageRoutes.post('/createMessage', async (request, response) => {
     try {
-        let { messageThreadId, senderId, content } = await request.body;
+        let { messageThreadId, senderEmail, content } = await request.body;
         if (typeof messageThreadId == "string") {
             messageThreadId = new Types.ObjectId(messageThreadId);
         }
         const newMessage = new Message({
-            senderId,
+            senderEmail,
             content,
         });
 
