@@ -47,7 +47,7 @@ const ChatRoom = () => {
                     <form onSubmit={handleSubmit}>
                         <TextInput
                             id={"chat-room--text-input"}
-                            size={"xl"}
+                            size={"lg"}
                             labelText={"make a message"}
                             placeholder={"message"}
                             value={messageInput}
