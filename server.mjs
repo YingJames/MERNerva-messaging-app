@@ -7,6 +7,7 @@ import { connectToMongoClient } from "./config/mongoClient.mjs";
 import { messageRoutes, roomRoutes, userRoutes } from "./routes/index.mjs";
 
 import colors from "colors";
+import watchMessageThread from "./mongoWatchers/watchMessageThread.mjs";
 
 const PORT = process.env.PORT || 5050;
 const app = express();
@@ -23,6 +24,8 @@ app.get('*', (request, response) => {
 });
 
 connectToMongoClient();
+watchMessageThread();
+
 app.use("/api/database/users", userRoutes);
 app.use("/api/database/rooms", roomRoutes);
 app.use("/api/database/messages", messageRoutes);
