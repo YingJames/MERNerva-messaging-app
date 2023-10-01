@@ -3,23 +3,39 @@ import { CurrentUserContext } from "../../App";
 import { useContext, useEffect, useState } from "react";
 import { CurrentRoomContext } from "../Dashboard/Dashboard";
 import { CreateMessage, FindMessages } from "../../requests/messages";
-import { Button, FluidForm, TextInput, Theme } from "@carbon/react";
-import { Send } from "@carbon/icons-react";
+import { TextInput } from "@carbon/react";
 import Avvvatars from "avvvatars-react";
 
 const ChatRoom = () => {
     // user variable from firebase
     const { user } = useContext(CurrentUserContext);
-    const { currentRoom, setCurrentRoom } = useContext(CurrentRoomContext);
+    const { currentRoom } = useContext(CurrentRoomContext);
     const [messages, setMessages] = useState([]);
     const [messageInput, setMessageInput] = useState('');
 
+    const [rerender, setRerender] = useState(false);
+
+
     useEffect(() => {
         getMessages();
-    }, [currentRoom]);
-    // TODO: messages do not refresh if clicking same room because useEffect does not run
-    // TODO: render the message on the screen
-    // TODO how to update the message thread when a new message is sent
+        const eventSource = new EventSource("http://localhost:5050/stream")
+        if (typeof(EventSource) !== 'undefined') {
+            console.log('connected to eventSource');
+        } else {
+            console.log('not able to connect to eventSource');
+        }
+
+        eventSource.onmessage = (event) => {
+            console.log('anything please event source')
+            const eventData = JSON.parse(event.data);
+            console.log(eventData.message)
+            if (eventData.message === "rerender") {
+                setRerender(!rerender);
+            }
+        }
+        return () => eventSource.close();
+    }, [currentRoom, rerender]);
+
     async function getMessages() {
         if (currentRoom) {
             const messages = await FindMessages(currentRoom.messageThread);
@@ -36,7 +52,7 @@ const ChatRoom = () => {
     async function handleSubmit(e) {
         e.preventDefault();
         console.log(`handleSubmit: ${messageInput}`);
-        if (messageInput != '') {
+        if (messageInput !== '') {
             await CreateMessage(currentRoom.messageThread, user.email, messageInput);
         }
         setMessageInput('');
@@ -63,9 +79,10 @@ const ChatRoom = () => {
                 })}
             </div>
             {currentRoom &&
-                <div theme={"g90"}>
+                <div>
                     <form className="chat-room--input" onSubmit={handleSubmit}>
                         <TextInput
+                            labelText={''}
                             id={"chat-room--text-input"}
                             placeholder={"message"}
                             value={messageInput}
