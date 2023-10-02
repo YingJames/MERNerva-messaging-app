@@ -11,6 +11,7 @@ import './_chatrooms-sidebar.scss';
 import { CreateRoom, FindRooms } from "../../../requests/rooms";
 import { CurrentUserContext } from "../../../App";
 import { CurrentRoomContext } from "../../Dashboard/Dashboard";
+import { BASE_URL } from "../../../env";
 
 
 const ChatRoomsSidebar = () => {
@@ -34,7 +35,7 @@ const ChatRoomsSidebar = () => {
         // when a new user signs up on google, they are added to mongodb, but there is latency
         // check if user exists in mongodb yet
         fetchRooms();
-        const eventSource = new EventSource("http://localhost:5050/watchRooms")
+        const eventSource = new EventSource(`${BASE_URL}/watchRooms`)
         if (typeof (EventSource) !== 'undefined') {
             console.log('connected to eventSource');
         } else {

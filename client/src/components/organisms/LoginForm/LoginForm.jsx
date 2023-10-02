@@ -8,7 +8,10 @@ import { loginWithEmailPassword, loginWithGoogle } from "../../../auth";
 import { useContext } from "react";
 import { CurrentUserContext } from "../../../App";
 import { handleLoginError } from "../../../auth/auth-error-handling";
+import { BASE_URL } from "../../../env";
 
+
+console.log(`${BASE_URL}/basetest`)
 const LoginForm = () => {
     const {setUser} = useContext(CurrentUserContext);
 

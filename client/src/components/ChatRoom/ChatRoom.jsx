@@ -5,6 +5,7 @@ import { CurrentRoomContext } from "../Dashboard/Dashboard";
 import { CreateMessage, FindMessages } from "../../requests/messages";
 import { TextInput } from "@carbon/react";
 import Avvvatars from "avvvatars-react";
+import { BASE_URL } from "../../env";
 
 function useChatScroll(dep) {
     const ref = useRef()
@@ -28,7 +29,7 @@ const ChatRoom = () => {
 
     useEffect(() => {
         getMessages();
-        const eventSource = new EventSource("http://localhost:5050/watchMessageThread")
+        const eventSource = new EventSource(`${BASE_URL}/watchMessageThread`)
         if (typeof(EventSource) !== 'undefined') {
             console.log('connected to eventSource');
         } else {
