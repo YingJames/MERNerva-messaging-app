@@ -59,6 +59,13 @@ app.get('*', (request, response) => {
     response.sendFile(path.join(__dirname, 'client/build/index.html'));
 });
 
+// replace console.* for disable log on production
+if (process.env.NODE_ENV === 'production') {
+  console.log = () => {}
+  console.error = () => {}
+  console.debug = () => {}
+}
+
 app.listen(PORT, () => {
     console.log(colors.yellow.bold(`Server is running on http://localhost:${PORT}`));
 });
