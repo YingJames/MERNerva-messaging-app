@@ -1,10 +1,20 @@
 import './_chat-room.scss';
 import { CurrentUserContext } from "../../App";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { CurrentRoomContext } from "../Dashboard/Dashboard";
 import { CreateMessage, FindMessages } from "../../requests/messages";
 import { TextInput } from "@carbon/react";
 import Avvvatars from "avvvatars-react";
+
+function useChatScroll(dep) {
+    const ref = useRef()
+    useEffect(() => {
+        if (ref.current) {
+            ref.current.scrollTop = ref.current.scrollHeight;
+        }
+    }, [dep])
+    return ref
+}
 
 const ChatRoom = () => {
     // user variable from firebase
@@ -12,9 +22,9 @@ const ChatRoom = () => {
     const { currentRoom } = useContext(CurrentRoomContext);
     const [messages, setMessages] = useState([]);
     const [messageInput, setMessageInput] = useState('');
-
     const [rerender, setRerender] = useState(false);
 
+    const messageScrollRef = useChatScroll(messages);
 
     useEffect(() => {
         getMessages();
@@ -61,7 +71,7 @@ const ChatRoom = () => {
     return (
         <div className="chat-room">
             {currentRoom ? <h1>{currentRoom.name}</h1> : <h1>Choose a chat room to start messaging</h1>}
-            <div className="chat-room--messages">
+            <div className="chat-room--messages" ref={messageScrollRef}>
                 {currentRoom && messages.map((message, index) => {
                     return (
                         <div
