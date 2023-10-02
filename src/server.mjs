@@ -54,9 +54,9 @@ app.use("/api/database/users", userRoutes);
 app.use("/api/database/rooms", roomRoutes);
 app.use("/api/database/messages", messageRoutes);
 
-app.use(express.static(path.join(__dirname, 'client/build')));
+app.use(express.static(path.join(__dirname, '../client/build')));
 app.get('*', (request, response) => {
-    response.sendFile(path.join(__dirname, 'client/build/index.html'));
+    response.sendFile(path.join(__dirname, '../client/build/index.html'));
 });
 
 // replace console.* for disable log on production

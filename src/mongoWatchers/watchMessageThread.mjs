@@ -1,7 +1,7 @@
 import MessageThread from "../models/messageThread.mjs";
 
 async function watchMessageThread() {
-    console.log("testing message thread")
+    // console.log("testing message thread")
 
     const changeStream = MessageThread.watch();
 
