@@ -40,7 +40,7 @@ const Navbar = () => {
                         Carbon Login Form App
                     </HeaderName>
                     <HeaderNavigation aria-label="Carbon Tutorial">
-                        <HeaderMenuItem as={Link} to="/repos">Repositories</HeaderMenuItem>
+                        <HeaderMenuItem as={Link} target="_blank" to="https://github.com/YingJames/MERNerva-messaging-app/tree/feature">Repositories</HeaderMenuItem>
                     </HeaderNavigation>
                     <SideNav
                         aria-label="Side navigation"
@@ -49,7 +49,7 @@ const Navbar = () => {
                     >
                         <SideNavItems>
                             <HeaderSideNavItems>
-                                <HeaderMenuItem as={Link} to="/repos">Repositories</HeaderMenuItem>
+                                <HeaderMenuItem as={Link} target="_blank" to="https://github.com/YingJames/MERNerva-messaging-app/tree/feature">Repositories</HeaderMenuItem>
                             </HeaderSideNavItems>
                         </SideNavItems>
                     </SideNav>
