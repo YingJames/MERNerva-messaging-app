@@ -18,7 +18,7 @@ const ChatRoom = () => {
 
     useEffect(() => {
         getMessages();
-        const eventSource = new EventSource("http://localhost:5050/stream")
+        const eventSource = new EventSource("http://localhost:5050/watchMessageThread")
         if (typeof(EventSource) !== 'undefined') {
             console.log('connected to eventSource');
         } else {

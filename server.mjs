@@ -7,6 +7,7 @@ import { connectToMongoClient } from "./config/mongoClient.mjs";
 import { messageRoutes, roomRoutes, userRoutes } from "./routes/index.mjs";
 import colors from "colors";
 import MessageThread from "./models/messageThread.mjs";
+import { Room } from "./models/room.mjs";
 
 const PORT = process.env.PORT || 5050;
 const app = express();
@@ -22,7 +23,20 @@ connectToMongoClient();
 const corsOptions = {
     origin: 'http://localhost:3000'
 }
-app.get('/stream', cors(corsOptions), (req, res) => {
+app.get('/watchRooms', cors(corsOptions), (req, res) => {
+    res.writeHead(200, {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        "Connection": "keep-alive",
+    });
+    const changeStream = Room.watch();
+    changeStream.on('change', () => {
+        const data = { message: "rerender" }
+        res.write("event: message\n");
+        res.write(`data: ${JSON.stringify(data)}\n\n`);
+    });
+});
+app.get('/watchMessageThread', cors(corsOptions), (req, res) => {
     res.writeHead(200, {
         "Content-Type": "text/event-stream",
         "Cache-Control": "no-cache",

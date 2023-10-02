@@ -1,15 +1,11 @@
 import { useState, useEffect, useRef, useContext } from 'react';
 import {
-    Search,
-    InlineNotification,
-    NotificationActionButton,
     Button,
     Modal,
     TextInput,
     Stack,
 } from "@carbon/react";
 import { Events, Group } from "@carbon/icons-react";
-import Avvvatars from 'avvvatars-react';
 import { DoesUserExist, FindUser } from '../../../requests/users';
 import './_chatrooms-sidebar.scss';
 import { CreateRoom, FindRooms } from "../../../requests/rooms";
@@ -30,13 +26,30 @@ const ChatRoomsSidebar = () => {
     const [roomName, setRoomName] = useState('');
     const [userEmails, setUserEmails] = useState('');
     const [showCreateRoomModal, setShowCreateRoomModal] = useState(false);
+    const [rerender, setRerender] = useState(false);
 
     useEffect(() => {
 
         // when a new user signs up on google, they are added to mongodb, but there is latency
         // check if user exists in mongodb yet
-            fetchRooms();
-    }, []);
+        fetchRooms();
+        const eventSource = new EventSource("http://localhost:5050/watchRooms")
+        if (typeof (EventSource) !== 'undefined') {
+            console.log('connected to eventSource');
+        } else {
+            console.log('not able to connect to eventSource');
+        }
+
+        eventSource.onmessage = (event) => {
+            console.log('anything please event source')
+            const eventData = JSON.parse(event.data);
+            console.log(eventData.message)
+            if (eventData.message === "rerender") {
+                setRerender(!rerender);
+            }
+        }
+        return () => eventSource.close();
+    }, [rerender]);
 
     const fetchRooms = async () => {
         // grab the current user mongodb _id
@@ -80,7 +93,7 @@ const ChatRoomsSidebar = () => {
             name: roomName,
             participants: participants
         }
-        const response = await CreateRoom(roomData);
+        await CreateRoom(roomData);
         await fetchRooms();
         // reset the values for the next Modal
         setRoomName('');
@@ -175,16 +188,16 @@ const ChatRoomsSidebar = () => {
                 <h3>Rooms</h3>
                 <ul>
                     {rooms.map((room, index) => {
-                        return <li key={room._id} index={index}>
-                            <Button className={"sidebar--chat-room__button"}
-                                    kind={"secondary"}
-                                    renderIcon={Group}
-                                    onClick={() => handleSeeRoomOnClick(index)}
-                            >
-                                {room.name}
-                            </Button>
+                            return <li key={room._id} index={index}>
+                                <Button className={"sidebar--chat-room__button"}
+                                        kind={"secondary"}
+                                        renderIcon={Group}
+                                        onClick={() => handleSeeRoomOnClick(index)}
+                                >
+                                    {room.name}
+                                </Button>
                             </li>
-                    }
+                        }
                     )}
                 </ul>
 
