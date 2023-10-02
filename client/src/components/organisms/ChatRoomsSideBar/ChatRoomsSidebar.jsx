@@ -25,6 +25,7 @@ const ChatRoomsSidebar = () => {
     // for the create room modal
     const [roomName, setRoomName] = useState('');
     const [userEmails, setUserEmails] = useState('');
+    const [userEmailInvalid, setUserEmailInvalid] = useState(false);
     const [showCreateRoomModal, setShowCreateRoomModal] = useState(false);
     const [rerender, setRerender] = useState(false);
 
@@ -77,28 +78,36 @@ const ChatRoomsSidebar = () => {
     }
 
     async function handleCreateRoomOnSubmit() {
-        setShowCreateRoomModal(false);
-        const userEmailsArray = userEmails
-            .replace(" ", "")
-            .split(',');
-        userEmailsArray.push(user.email);
+        try {
+            setShowCreateRoomModal(false);
+            const userEmailsArray = userEmails
+                .replace(" ", "")
+                .split(',');
+            userEmailsArray.push(user.email);
 
-        // finds _id of each participant using their email
-        const participants = await Promise.all(userEmailsArray.map(async (email) => {
-            const { _id } = await FindUser(email);
-            return _id;
-        }));
+            // finds _id of each participant using their email
+            const participants = await Promise.all(userEmailsArray.map(async (email) => {
+                const { _id } = await FindUser(email);
+                return _id;
+            }));
 
-        const roomData = {
-            name: roomName,
-            participants: participants
+            const roomData = {
+                name: roomName,
+                participants: participants
+            }
+            await CreateRoom(roomData);
+            await fetchRooms();
+            // reset the values for the next Modal
+            setRoomName('');
+            setUserEmails('');
+            createRoomRef.current.reset();
+
+            setUserEmailInvalid(false);
+            setShowCreateRoomModal(false)
+        } catch (error) {
+            setUserEmailInvalid(true);
+            setShowCreateRoomModal(true);
         }
-        await CreateRoom(roomData);
-        await fetchRooms();
-        // reset the values for the next Modal
-        setRoomName('');
-        setUserEmails('');
-        createRoomRef.current.reset();
     }
 
     function handleSeeRoomOnClick(index) {
@@ -136,7 +145,9 @@ const ChatRoomsSidebar = () => {
         <aside className="sidebar">
             <Modal
                 open={showCreateRoomModal}
-                onRequestClose={() => setShowCreateRoomModal(false)}
+                onRequestClose={() => {
+                    setShowCreateRoomModal(false)
+                }}
                 onRequestSubmit={handleCreateRoomOnSubmit}
                 modalHeading="Create a room"
                 primaryButtonText="Create your room"
@@ -163,6 +174,8 @@ const ChatRoomsSidebar = () => {
                             />
 
                             <TextInput id="create-room--text-input__add-participant"
+                                       invalid={userEmailInvalid}
+                                       invalidText="Invalid format or no account exists with one of the associated e-mail addresses"
                                        labelText="Add people to your room by their e-mail address. Separate multiple e-mails with a comma."
                                        placeholder="john@email.com, bob@email.com"
                                        onChange={handleChangeUserEmailsChange}
