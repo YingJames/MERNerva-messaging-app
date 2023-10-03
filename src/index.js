@@ -20,10 +20,7 @@ const __dirname = path.dirname(__filename);
 
 connectToMongoClient();
 
-const corsOptions = {
-    origin: 'http://localhost:3000'
-}
-app.get('/watchRooms', cors(corsOptions), (req, res) => {
+app.get('/watchRooms', (req, res) => {
     res.writeHead(200, {
         "Content-Type": "text/event-stream",
         "Cache-Control": "no-cache",
@@ -36,7 +33,7 @@ app.get('/watchRooms', cors(corsOptions), (req, res) => {
         res.write(`data: ${JSON.stringify(data)}\n\n`);
     });
 });
-app.get('/watchMessageThread', cors(corsOptions), (req, res) => {
+app.get('/watchMessageThread', (req, res) => {
     res.writeHead(200, {
         "Content-Type": "text/event-stream",
         "Cache-Control": "no-cache",
