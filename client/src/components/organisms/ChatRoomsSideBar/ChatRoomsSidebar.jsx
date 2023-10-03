@@ -1,20 +1,17 @@
 import { useState, useEffect, useRef, useContext } from 'react';
 import {
-    Search,
-    InlineNotification,
-    NotificationActionButton,
     Button,
     Modal,
     TextInput,
     Stack,
 } from "@carbon/react";
 import { Events, Group } from "@carbon/icons-react";
-import Avvvatars from 'avvvatars-react';
 import { DoesUserExist, FindUser } from '../../../requests/users';
 import './_chatrooms-sidebar.scss';
 import { CreateRoom, FindRooms } from "../../../requests/rooms";
 import { CurrentUserContext } from "../../../App";
 import { CurrentRoomContext } from "../../Dashboard/Dashboard";
+import { BASE_URL } from "../../../env";
 
 
 const ChatRoomsSidebar = () => {
@@ -29,14 +26,32 @@ const ChatRoomsSidebar = () => {
     // for the create room modal
     const [roomName, setRoomName] = useState('');
     const [userEmails, setUserEmails] = useState('');
+    const [userEmailInvalid, setUserEmailInvalid] = useState(false);
     const [showCreateRoomModal, setShowCreateRoomModal] = useState(false);
+    const [rerender, setRerender] = useState(false);
 
     useEffect(() => {
 
         // when a new user signs up on google, they are added to mongodb, but there is latency
         // check if user exists in mongodb yet
-            fetchRooms();
-    }, []);
+        fetchRooms();
+        const eventSource = new EventSource(`${BASE_URL}/watchRooms`)
+        if (typeof (EventSource) !== 'undefined') {
+            console.log('connected to eventSource');
+        } else {
+            console.log('not able to connect to eventSource');
+        }
+
+        eventSource.onmessage = (event) => {
+            console.log('anything please event source')
+            const eventData = JSON.parse(event.data);
+            console.log(eventData.message)
+            if (eventData.message === "rerender") {
+                setRerender(!rerender);
+            }
+        }
+        return () => eventSource.close();
+    }, [rerender]);
 
     const fetchRooms = async () => {
         // grab the current user mongodb _id
@@ -64,28 +79,36 @@ const ChatRoomsSidebar = () => {
     }
 
     async function handleCreateRoomOnSubmit() {
-        setShowCreateRoomModal(false);
-        const userEmailsArray = userEmails
-            .replace(" ", "")
-            .split(',');
-        userEmailsArray.push(user.email);
+        try {
+            setShowCreateRoomModal(false);
+            const userEmailsArray = userEmails
+                .replace(" ", "")
+                .split(',');
+            userEmailsArray.push(user.email);
 
-        // finds _id of each participant using their email
-        const participants = await Promise.all(userEmailsArray.map(async (email) => {
-            const { _id } = await FindUser(email);
-            return _id;
-        }));
+            // finds _id of each participant using their email
+            const participants = await Promise.all(userEmailsArray.map(async (email) => {
+                const { _id } = await FindUser(email);
+                return _id;
+            }));
 
-        const roomData = {
-            name: roomName,
-            participants: participants
+            const roomData = {
+                name: roomName,
+                participants: participants
+            }
+            await CreateRoom(roomData);
+            await fetchRooms();
+            // reset the values for the next Modal
+            setRoomName('');
+            setUserEmails('');
+            createRoomRef.current.reset();
+
+            setUserEmailInvalid(false);
+            setShowCreateRoomModal(false)
+        } catch (error) {
+            setUserEmailInvalid(true);
+            setShowCreateRoomModal(true);
         }
-        const response = await CreateRoom(roomData);
-        await fetchRooms();
-        // reset the values for the next Modal
-        setRoomName('');
-        setUserEmails('');
-        createRoomRef.current.reset();
     }
 
     function handleSeeRoomOnClick(index) {
@@ -123,7 +146,9 @@ const ChatRoomsSidebar = () => {
         <aside className="sidebar">
             <Modal
                 open={showCreateRoomModal}
-                onRequestClose={() => setShowCreateRoomModal(false)}
+                onRequestClose={() => {
+                    setShowCreateRoomModal(false)
+                }}
                 onRequestSubmit={handleCreateRoomOnSubmit}
                 modalHeading="Create a room"
                 primaryButtonText="Create your room"
@@ -150,6 +175,8 @@ const ChatRoomsSidebar = () => {
                             />
 
                             <TextInput id="create-room--text-input__add-participant"
+                                       invalid={userEmailInvalid}
+                                       invalidText="Invalid format or no account exists with one of the associated e-mail addresses"
                                        labelText="Add people to your room by their e-mail address. Separate multiple e-mails with a comma."
                                        placeholder="john@email.com, bob@email.com"
                                        onChange={handleChangeUserEmailsChange}
@@ -175,16 +202,16 @@ const ChatRoomsSidebar = () => {
                 <h3>Rooms</h3>
                 <ul>
                     {rooms.map((room, index) => {
-                        return <li key={room._id} index={index}>
-                            <Button className={"sidebar--chat-room__button"}
-                                    kind={"secondary"}
-                                    renderIcon={Group}
-                                    onClick={() => handleSeeRoomOnClick(index)}
-                            >
-                                {room.name}
-                            </Button>
+                            return <li key={room._id} index={index}>
+                                <Button className={"sidebar--chat-room__button"}
+                                        kind={"secondary"}
+                                        renderIcon={Group}
+                                        onClick={() => handleSeeRoomOnClick(index)}
+                                >
+                                    {room.name}
+                                </Button>
                             </li>
-                    }
+                        }
                     )}
                 </ul>
 

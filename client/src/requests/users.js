@@ -1,6 +1,8 @@
+import { BASE_URL } from "../env";
+
 async function FindUser(email) {
     try {
-        const response = await fetch("http://localhost:5050/api/database/users/findUser", {
+        const response = await fetch(`${BASE_URL}/api/database/users/findUser`, {
             method: "POST",
             cors: "cors",
             headers: {
@@ -20,7 +22,7 @@ async function FindUser(email) {
 async function CreateUser(userData) {
     try {
         const { email, displayName, uid } = userData;
-        const response = await fetch("http://localhost:5050/api/database/users/createUser", {
+        const response = await fetch(`${BASE_URL}/api/database/users/createUser`, {
             method: 'POST',
             mode: 'cors',
             headers: {
@@ -42,7 +44,7 @@ async function CreateUser(userData) {
 
 async function DoesUserExist(email) {
     try {
-        const response = await fetch("http://localhost:5050/api/database/users/userExist", {
+        const response = await fetch(`${BASE_URL}/api/database/users/userExist`, {
             method: "POST",
             cors: "cors",
             headers: {

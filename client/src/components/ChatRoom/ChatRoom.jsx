@@ -1,23 +1,52 @@
 import './_chat-room.scss';
 import { CurrentUserContext } from "../../App";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { CurrentRoomContext } from "../Dashboard/Dashboard";
 import { CreateMessage, FindMessages } from "../../requests/messages";
-import { Button, FluidForm, TextInput, Theme } from "@carbon/react";
+import { TextInput } from "@carbon/react";
+import Avvvatars from "avvvatars-react";
+import { BASE_URL } from "../../env";
+
+function useChatScroll(dep) {
+    const ref = useRef()
+    useEffect(() => {
+        if (ref.current) {
+            ref.current.scrollTop = ref.current.scrollHeight;
+        }
+    }, [dep])
+    return ref
+}
 
 const ChatRoom = () => {
     // user variable from firebase
     const { user } = useContext(CurrentUserContext);
-    const { currentRoom, setCurrentRoom } = useContext(CurrentRoomContext);
+    const { currentRoom } = useContext(CurrentRoomContext);
     const [messages, setMessages] = useState([]);
     const [messageInput, setMessageInput] = useState('');
+    const [rerender, setRerender] = useState(false);
+
+    const messageScrollRef = useChatScroll(messages);
 
     useEffect(() => {
         getMessages();
-    }, [currentRoom]);
-    // TODO: messages do not refresh if clicking same room because useEffect does not run
-    // TODO: render the message on the screen
-    // TODO how to update the message thread when a new message is sent
+        const eventSource = new EventSource(`${BASE_URL}/watchMessageThread`)
+        if (typeof(EventSource) !== 'undefined') {
+            console.log('connected to eventSource');
+        } else {
+            console.log('not able to connect to eventSource');
+        }
+
+        eventSource.onmessage = (event) => {
+            console.log('anything please event source')
+            const eventData = JSON.parse(event.data);
+            console.log(eventData.message)
+            if (eventData.message === "rerender") {
+                setRerender(!rerender);
+            }
+        }
+        return () => eventSource.close();
+    }, [currentRoom, rerender]);
+
     async function getMessages() {
         if (currentRoom) {
             const messages = await FindMessages(currentRoom.messageThread);
@@ -34,26 +63,42 @@ const ChatRoom = () => {
     async function handleSubmit(e) {
         e.preventDefault();
         console.log(`handleSubmit: ${messageInput}`);
-        await CreateMessage(currentRoom.messageThread, user.email, messageInput);
+        if (messageInput !== '') {
+            await CreateMessage(currentRoom.messageThread, user.email, messageInput);
+        }
         setMessageInput('');
     }
 
     return (
         <div className="chat-room">
             {currentRoom ? <h1>{currentRoom.name}</h1> : <h1>Choose a chat room to start messaging</h1>}
-            <div className="chat-room--messages"></div>
-            { currentRoom &&
-                <div className="chat-room--input" theme={"g90"}>
-                    <form onSubmit={handleSubmit}>
+            <div className="chat-room--messages" ref={messageScrollRef}>
+                {currentRoom && messages.map((message, index) => {
+                    return (
+                        <div
+                            key={index}
+                            className={`chat-room--message-wrapper 
+                            ${user.email === message.senderEmail && " chat-room--message__current-user"}`}
+                        >
+                            {user.email !== message.senderEmail &&
+                                <Avvvatars value={message.senderEmail} size="40" />
+                            }
+                            <p className={"chat-room--message-bubble"}>{message.content}</p>
+                        </div>
+                    )
+
+                })}
+            </div>
+            {currentRoom &&
+                <div>
+                    <form className="chat-room--input" onSubmit={handleSubmit}>
                         <TextInput
+                            labelText={''}
                             id={"chat-room--text-input"}
-                            size={"lg"}
-                            labelText={"make a message"}
                             placeholder={"message"}
                             value={messageInput}
                             onChange={handleMessageInputChange}
                         />
-                        <Button type="submit">Submit</Button>
                     </form>
                 </div>
             }

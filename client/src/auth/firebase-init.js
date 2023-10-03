@@ -19,7 +19,7 @@ function FirebaseInit() {
 
     const auth = getAuth(firebaseApp);
 // simulates auth locally & doesn't mess with production code
-    connectAuthEmulator(auth, "http://localhost:9099");
+//     connectAuthEmulator(auth, "http://localhost:9099");
     return auth;
 }
 

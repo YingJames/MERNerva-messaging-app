@@ -8,7 +8,10 @@ import { loginWithEmailPassword, loginWithGoogle } from "../../../auth";
 import { useContext } from "react";
 import { CurrentUserContext } from "../../../App";
 import { handleLoginError } from "../../../auth/auth-error-handling";
+import { BASE_URL } from "../../../env";
 
+
+console.log(`${BASE_URL}/basetest`)
 const LoginForm = () => {
     const {setUser} = useContext(CurrentUserContext);
 
@@ -40,7 +43,7 @@ const LoginForm = () => {
 
     return (<Form className="form" onSubmit={handleFormSubmit}>
             <div className="form--title-container">
-                <h1 className='form__title cds--type-heading-04'>Log in to Carbon Login Form</h1>
+                <h1 className='form__title cds--type-heading-04'>Log in to MERN-erva Messaging App</h1>
             </div>
 
             {inputInvalidState.accountExist && (<div className="inline-notification">

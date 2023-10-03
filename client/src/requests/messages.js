@@ -1,6 +1,8 @@
+import { BASE_URL } from "../env";
+
 async function FindMessages(messageThreadId) {
     try {
-        const response = await fetch("http://localhost:5050/api/database/messages/findMessageThread", {
+        const response = await fetch(`${BASE_URL}/api/database/messages/findMessageThread`, {
             method: 'POST',
             mode: 'cors',
             headers: {
@@ -20,7 +22,7 @@ async function FindMessages(messageThreadId) {
 
 async function CreateMessage(messageThreadId, senderEmail, content) {
     try {
-        const response = await fetch("http://localhost:5050/api/database/messages/createMessage", {
+        const response = await fetch(`${BASE_URL}/api/database/messages/createMessage`, {
             method: 'POST',
             mode: 'cors',
             headers: {
