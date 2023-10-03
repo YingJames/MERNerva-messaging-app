@@ -37,9 +37,9 @@ const Navbar = () => {
                         isActive={isSideNavExpanded}
                     />
                     <HeaderName as={Link} to="/" prefix="">
-                        Carbon Login Form App
+                        MERN-erva Messaging
                     </HeaderName>
-                    <HeaderNavigation aria-label="Carbon Tutorial">
+                    <HeaderNavigation aria-label="MERN-erva github repository">
                         <HeaderMenuItem as={Link} target="_blank" to="https://github.com/YingJames/MERNerva-messaging-app/tree/feature">Repositories</HeaderMenuItem>
                     </HeaderNavigation>
                     <SideNav
